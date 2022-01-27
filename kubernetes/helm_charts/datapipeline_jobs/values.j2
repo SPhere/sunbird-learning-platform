@@ -172,6 +172,7 @@ activity-aggregate-updater:
     jobmanager.memory.flink.size: {{ flink_job_names['activity-aggregate-updater'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['activity-aggregate-updater'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['activity-aggregate-updater'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -204,6 +205,7 @@ relation-cache-updater:
     jobmanager.memory.flink.size: {{ flink_job_names['relation-cache-updater'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['relation-cache-updater'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['relation-cache-updater'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -243,6 +245,7 @@ post-publish-processor:
     jobmanager.memory.flink.size: {{ flink_job_names['post-publish-processor'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['post-publish-processor'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['post-publish-processor'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -273,6 +276,9 @@ questionset-publish:
     azure_storage_key="{{ sunbird_public_storage_account_name }}"
     azure_storage_secret="{{ sunbird_public_storage_account_key }}"
     azure_storage_container="{{ azure_public_container }}"
+    aws_storage_key = "{{ aws_storage_key }}"
+    aws_storage_secret: "{{ aws_storage_secret }}"
+    aws_storage_container: "{{ aws_storage_container }}"
 
     master.category.validation.enabled ="{{ master_category_validation_enabled }}"
 
@@ -280,6 +286,7 @@ questionset-publish:
     jobmanager.memory.flink.size: {{ flink_job_names['questionset-publish'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['questionset-publish'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['questionset-publish'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -334,6 +341,7 @@ video-stream-generator:
     jobmanager.memory.flink.size: {{ flink_job_names['video-stream-generator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['video-stream-generator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['video-stream-generator'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -357,7 +365,7 @@ search-indexer:
     dialcode.index.name = "dialcode"
     dailcodemetrics.index.name = "dialcodemetrics"
     restrict.metadata.objectTypes = []
-    nested.fields = ["badgeAssertions", "targets", "badgeAssociations", "plugins", "me_totalTimeSpent", "me_totalPlaySessionCount", "me_totalTimeSpentInSec", "batches", "trackable", "credentials", "discussionForum", "provider", "osMetadata", "actions"]
+    nested.fields = ["badgeAssertions", "targets", "badgeAssociations", "plugins", "me_totalTimeSpent", "me_totalPlaySessionCount", "me_totalTimeSpentInSec", "batches", "trackable", "credentials", "provider", "osMetadata", "actions", "taxonomyPaths_v2", "competencies_v3"]
     schema.definition_cache.expiry = {{ schema_definition_cache_expiry_in_sec }}
     restrict.objectTypes = {{ search_indexer_restrict_object_types | to_json }}
     ignored.fields={{ search_indexer_ignored_fields | to_json }}
@@ -366,6 +374,7 @@ search-indexer:
     jobmanager.memory.flink.size: {{ flink_job_names['search-indexer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['search-indexer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['search-indexer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -412,6 +421,7 @@ enrolment-reconciliation:
     jobmanager.memory.flink.size: {{ flink_job_names['enrolment-reconciliation'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['enrolment-reconciliation'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['enrolment-reconciliation'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -459,6 +469,7 @@ asset-enrichment:
     jobmanager.memory.flink.size: {{ flink_job_names['asset-enrichment'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['asset-enrichment'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['asset-enrichment'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -483,6 +494,7 @@ audit-history-indexer:
     jobmanager.memory.flink.size: {{ flink_job_names['audit-history-indexer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['audit-history-indexer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['audit-history-indexer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -523,6 +535,7 @@ auto-creator-v2:
     jobmanager.memory.flink.size: {{ flink_job_names['auto-creator-v2'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['auto-creator-v2'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['auto-creator-v2'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -553,6 +566,7 @@ audit-event-generator:
     jobmanager.memory.flink.size: {{ flink_job_names['audit-event-generator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['audit-event-generator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['audit-event-generator'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -583,6 +597,7 @@ metrics-data-transformer:
     jobmanager.memory.flink.size: {{ flink_job_names['metrics-data-transformer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['metrics-data-transformer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['metrics-data-transformer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -631,6 +646,7 @@ collection-cert-pre-processor:
     jobmanager.memory.flink.size: {{ flink_job_names['collection-cert-pre-processor'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['collection-cert-pre-processor'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['collection-cert-pre-processor'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -669,6 +685,7 @@ collection-certificate-generator:
     jobmanager.memory.flink.size: {{ flink_job_names['collection-certificate-generator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['collection-certificate-generator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['collection-certificate-generator'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -706,6 +723,7 @@ mvc-indexer:
     jobmanager.memory.flink.size: {{ flink_job_names['mvc-indexer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['mvc-indexer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['mvc-indexer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -768,6 +786,7 @@ content-publish:
     jobmanager.memory.flink.size: {{ flink_job_names['content-publish'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['content-publish'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['content-publish'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
