@@ -277,7 +277,7 @@ mvc_indexer_ml_keyword_host: "{{ mlworkbench | default('') }}"
 mvc_indexer_ml_keyword_port: 3579
 mvc_indexer_nested_fields: "trackable,credentials"
 
-service_monitor_enabled: true
+service_monitor_enabled: false
 
 ### controlling the flink jobs log level
 flink_jobs_console_log_level: INFO
