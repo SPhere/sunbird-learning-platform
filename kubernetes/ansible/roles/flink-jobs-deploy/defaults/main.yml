@@ -293,3 +293,4 @@ source_base_url: "{{proto}}://{{domain_name}}/api"
 
 
 registry_sunbird_keyspace: "sunbird"
+cert_registry_table: "cert_registry"
