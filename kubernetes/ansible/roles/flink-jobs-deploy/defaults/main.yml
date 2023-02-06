@@ -290,3 +290,6 @@ content_stream_enabled: true
 content_artifact_size_for_online: 209715200
 
 source_base_url: "{{proto}}://{{domain_name}}/api"
+
+
+registry_sunbird_keyspace: "sunbird"
