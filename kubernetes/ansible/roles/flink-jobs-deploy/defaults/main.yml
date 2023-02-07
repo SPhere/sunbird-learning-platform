@@ -75,6 +75,11 @@ post_publish_batch_create_parallelism: 1
 certificate_generator_consumer_parallelism: 1
 certificate_generator_parallelism: 1
 
+telemetry_data_service_processor_consumer_parallelism: 1
+telemetry_data_service_event_router_parallelism: 1
+telemetry_data_service_shallow_copy_parallelism: 1
+telemetry_data_service_link_dialcode_parallelism: 1
+telemetry_data_service_batch_create_parallelism: 1
 
 ### Video stream generator related vars
 ### IMPORTANT: The media-service configuration values should be updated in respective environment.
