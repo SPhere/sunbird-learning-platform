@@ -476,6 +476,50 @@ asset-enrichment:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    
+telemetry-data-service:
+  telemetry-data-service: |+
+    include file("/data/flink/conf/base-config.conf")
+    ###Entity Service Dependancy###
+    kafka_bootstrap_servers={{ kafka_servers_list }}
+    kafka_topic=dev.telemetry.ingest
+    kafka_group_id=telemetry.ingest
+
+    ##### Cassandra
+    get_cassandra_host={{ sunbird_cassandra_host }}
+    cassandra_ports={{ sunbird_cassandra_port }}
+    cassandra_key_space={{ cassandra_key_space }}
+    cassandra_enrol_table={{ cassandra_enrol_table }}
+
+    ###Elasticsearch configuration
+    es_hosts={{course_elasticsearch_host}}
+    es_ports={{elasticsearch_http_port}}
+    es_user_index={{ es_user_index }}
+    es_course_index={{ es_course_index }}
+
+    #####  Mongodb
+    mongo_db_host={{ mongodb_host }}
+    mongo_db_port={{ mongodb_port }}
+    mongo_db_name={{ mongo_db_name }}
+    mongo_db_collection={{ mongo_db_collection }}
+
+    task {
+      consumer.parallelism = {{ telemetry_data_service_processor_consumer_parallelism }}
+      router.parallelism = {{ telemetry_data_service_event_router_parallelism }}
+      shallow_copy.parallelism = {{ telemetry_data_service_shallow_copy_parallelism }}
+      link_dialcode.parallelism = {{ telemetry_data_service_link_dialcode_parallelism }}
+      batch_create.parallelism = {{ telemetry_data_service_batch_create_parallelism }}
+    }
+
+
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['telemetry-data-service'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['telemetry-data-service'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['telemetry-data-service'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
 
 audit-history-indexer:
   audit-history-indexer: |+
