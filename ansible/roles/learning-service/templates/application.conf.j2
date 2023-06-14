@@ -176,6 +176,7 @@ job.request.event.mimetype=["application/pdf", "video/avi", "video/mpeg", "video
                                                            "application/xml",
                                                            "text/plain",
                                                            "text/html",
+                                                           "application/survey",
                                                            "text/javascript",
                                                            "text/xml",
                                                            "text/css",
@@ -280,3 +281,9 @@ content.tagging.property="subject,medium"
 
 # Search Service Config
 kp.search_service.base_url="{{ kp_search_service_base_url }}"
+
+collection.only_published_children=true
+indexHtmlValidation.env=false
+
+enable.relation.properties=true
+additional.relation.properties="[{\"propertyName\": \"approvalStatus\", \"title\": \"ApprovalStatus\", \"description\": \"Approval Status of the Relation\", \"dataType\": \"Text\", \"required\": true, \"defaultValue\": \"Draft\"}]"

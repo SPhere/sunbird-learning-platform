@@ -17,6 +17,9 @@
   #become: yes
   #become_user: learning
   command: "{{learner_user_home}}/backup_script.sh"
+ 
+- name: clean up databases dir after upload
+  file: path={{learner_user_home}}/backup/databases state=absent
 
 - name: ls backup directory
   #become: yes
@@ -27,6 +30,7 @@
 - name: debugging variable
   debug:
     var: var1.stdout
+
 
 - name: Ensure azure blob storage container exists
   command: az storage container create  --name {{ neo4j_backup_azure_container_name }}
