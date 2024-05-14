@@ -10,7 +10,7 @@ jobmanager_heap_memory: 1024
 jobmanager_ui_rest_port: 80
 jobmanager_ui_tcp_port: 8081
 jobmanager_ui_service:
-  type: LoadBalancer
+  type: ClusterIP
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
