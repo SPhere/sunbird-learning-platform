@@ -1,4 +1,4 @@
-imagepullsecrets: devregistrysecret
+imagepullsecrets: sunbird-registry-secret
 
 ### Job manager related vars
 jobmanager_rpc_port: 6123
