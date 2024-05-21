@@ -1,4 +1,4 @@
-imagepullsecrets: sunbird-registry-secret
+imagepullsecrets: devregistrysecret
 
 ### Job manager related vars
 jobmanager_rpc_port: 6123
@@ -9,8 +9,8 @@ jobmanager_prom_port: 9250
 jobmanager_heap_memory: 1024
 jobmanager_ui_rest_port: 80
 jobmanager_ui_tcp_port: 8081
-jobmanager_ui_service:
-  type: LoadBalancer
+jobmanager_ui_service: 
+  type: ClusterIP
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
