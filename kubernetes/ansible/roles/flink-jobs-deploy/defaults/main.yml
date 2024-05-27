@@ -126,7 +126,7 @@ job_classname: ""
 ### class name vars
 flink_job_names:
   certificate-email-service:
-    job_class_name: 'Main'
+    job_class_name: 'src/main/scala/Main.scala'
     replica: 1
     jobmanager_memory: 1024m
     taskmanager_memory: 1024m
