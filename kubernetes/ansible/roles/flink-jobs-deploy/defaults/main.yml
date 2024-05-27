@@ -125,6 +125,13 @@ job_classname: ""
 
 ### class name vars
 flink_job_names:
+  certificate-email-service:
+    job_class_name: 'Main'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   activity-aggregate-updater:
     job_class_name: 'org.sunbird.job.aggregate.task.ActivityAggregateUpdaterStreamTask'
     replica: 1
