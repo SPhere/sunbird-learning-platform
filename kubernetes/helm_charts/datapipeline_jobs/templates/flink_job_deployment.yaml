@@ -108,8 +108,7 @@ spec:
         imagePullPolicy: Always
         workingDir: /opt/flink
        # command: ["/opt/flink/bin/start-cluster.sh -Djobmanager.entry-class=Main.scala"]
-        args: ["start-foreground",
-               "--job-classname=Main", 
+        args: ["standalone-job",
 {{- if eq .Values.checkpoint_store_type "azure" }}
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
 {{- end }}
