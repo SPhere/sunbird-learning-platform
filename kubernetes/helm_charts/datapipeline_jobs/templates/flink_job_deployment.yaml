@@ -109,8 +109,7 @@ spec:
         workingDir: /opt/flink
        # command: ["/opt/flink/bin/start-cluster.sh -Djobmanager.entry-class=Main.scala"]
         args: ["standalone-job",
-               "--job-classname", 
-               "Main",
+               -Djobmanager.entry-class=Main.scala,
 {{- if eq .Values.checkpoint_store_type "azure" }}
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
 {{- end }}
