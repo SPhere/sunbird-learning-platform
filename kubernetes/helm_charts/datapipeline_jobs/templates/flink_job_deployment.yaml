@@ -107,7 +107,7 @@ spec:
         image: "apache/flink:1.19.0-scala_2.12"
         imagePullPolicy: Always
         workingDir: /opt/flink
-        command: [ "sh", "-c" ,"/opt/flink/bin/start-cluster.sh  /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
+        command: [ "sh", "-c" ,"/opt/flink/bin/start-cluster.sh /opt/flink/bin/flink run /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
         #args: ["standalone-job", "--job-classname", "Main"]
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
