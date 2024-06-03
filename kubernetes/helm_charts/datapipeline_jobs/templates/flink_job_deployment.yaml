@@ -107,8 +107,8 @@ spec:
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: /opt/flink
-        #command: [ "sh", "-c" ,"/opt/flink/bin/start-cluster.sh /opt/flink/bin/flink run /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
-        args: ["standalone-job", "--job-classname", "com.job.ClassName"]
+        command: [ "sh", "-c" ,"/opt/flink/bin/flink run /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
+       # args: ["standalone-job", "--job-classname", "com.job.ClassName"]
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
