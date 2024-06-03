@@ -794,6 +794,7 @@ certificate-email-service:
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+    rest.address: 0.0.0.0
 content-publish:
   content-publish: |+
     include file("/data/flink/conf/base-config.conf")
