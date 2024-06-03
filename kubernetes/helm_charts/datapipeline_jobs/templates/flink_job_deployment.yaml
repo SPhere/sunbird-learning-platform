@@ -108,25 +108,7 @@ spec:
         imagePullPolicy: Always
         workingDir: /opt/flink
        # command: ["/opt/flink/bin/start-cluster.sh -Djobmanager.entry-class=Main.scala"]
-        args: ["standalone-job",
-               -Djobmanager.entry-class=Main.scala,
-{{- if eq .Values.checkpoint_store_type "azure" }}
-               "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
-{{- end }}
-{{- if eq .Values.checkpoint_store_type "s3" }}
-               "-Ds3.access-key={{ .Values.s3_access_key }}",
-               "-Ds3.secret-key={{ .Values.s3_secret_key }}",
-{{- end }}
-               "-Dweb.submit.enable=false",
-               "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
-               "-Dmetrics.reporter.prom.port={{ .Values.jobmanager.prom_port }}",
-               "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
-               "-Djobmanager.rpc.port={{ .Values.jobmanager.rpc_port }}",
-               "-Dparallelism.default=1", 
-               "-Dblob.server.port={{ .Values.jobmanager.blob_port }}", 
-               "-Dqueryable-state.server.ports={{ .Values.jobmanager.query_port }}",
-               "--config.file.path",
-               "/data/flink/conf/{{ .Release.Name }}.conf"]
+        args: ["standalone-job", "--job-classname", "Main"]
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
