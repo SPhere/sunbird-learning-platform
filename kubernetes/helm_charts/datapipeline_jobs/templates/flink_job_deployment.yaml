@@ -107,7 +107,7 @@ spec:
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: /opt/flink
-        command: ["/opt/flink/bin/start-cluster.sh -Djobmanager.entry-class=Main.scala"]
+       # command: ["/opt/flink/bin/start-cluster.sh -Djobmanager.entry-class=Main.scala"]
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
