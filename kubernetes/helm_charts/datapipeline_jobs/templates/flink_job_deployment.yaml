@@ -104,7 +104,7 @@ spec:
       - name: {{ .Values.imagepullsecrets }}
       containers:
       - name: {{ .Release.Name }}-jobmanager
-        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "apache/flink:1.19.0-scala_2.12"
         imagePullPolicy: Always
         workingDir: /opt/flink
        # command: ["/opt/flink/bin/start-cluster.sh -Djobmanager.entry-class=Main.scala"]
@@ -181,7 +181,7 @@ spec:
       - name: {{ .Values.imagepullsecrets }}
       containers:
       - name: {{ .Release.Name }}-taskmanager
-        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
+        image: "apache/flink:1.19.0-scala_2.12"
         imagePullPolicy: Always
         resources:
           requests:
