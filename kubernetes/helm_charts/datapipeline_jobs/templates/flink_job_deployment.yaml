@@ -109,7 +109,7 @@ spec:
         workingDir: /opt/flink
        # command: [ "sh", "-c" ,"/opt/flink/bin/flink run /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
        # args: ["standalone-job", "--job-classname", "com.job.ClassName"]
-        args: ["standalone-job",
+        args: ["/opt/flink/bin/start-cluster.sh",
 {{- if eq .Values.checkpoint_store_type "azure" }}
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
 {{- end }}
