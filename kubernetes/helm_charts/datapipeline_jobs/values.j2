@@ -796,6 +796,8 @@ certificate-email-service:
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
     rest.address: certificate-email-service-jobmanager
+    jobmanager.rpc.address: certificate-email-service-jobmanager
+    jobmanager.rpc.port: 6123
 content-publish:
   content-publish: |+
     include file("/data/flink/conf/base-config.conf")
