@@ -107,9 +107,9 @@ spec:
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: /opt/flink
-       # command: [ "sh", "-c" ,"/opt/flink/bin/start-cluster.sh && /opt/flink/bin/flink run /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
+       # command: [ "sh", "-c" ,"/opt/flink/bin/flink run /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
        # args: ["standalone-job", "--job-classname", "com.job.ClassName"]
-        args: [ "-Dweb.submit.enable=false",
+        args: [ "/opt/flink/bin/start-cluster.sh",
 {{- if eq .Values.checkpoint_store_type "azure" }}
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
 {{- end }}
@@ -117,6 +117,7 @@ spec:
                "-Ds3.access-key={{ .Values.s3_access_key }}",
                "-Ds3.secret-key={{ .Values.s3_secret_key }}",
 {{- end }}
+               "-Dweb.submit.enable=false",
                "-Dmetrics.reporter.prom.class=org.apache.flink.metrics.prometheus.PrometheusReporter",
                "-Dmetrics.reporter.prom.port={{ .Values.jobmanager.prom_port }}",
                "-Djobmanager.rpc.address={{ .Release.Name }}-jobmanager",
@@ -180,7 +181,7 @@ spec:
       - name: {{ .Values.imagepullsecrets }}
       containers:
       - name: {{ .Release.Name }}-taskmanager
-        image: "apache/flink:1.19.0-scala_2.12"
+        image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         resources:
           requests:
