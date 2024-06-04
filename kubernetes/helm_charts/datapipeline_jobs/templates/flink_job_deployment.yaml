@@ -107,7 +107,7 @@ spec:
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
         workingDir: /opt/flink
-        command: ["/opt/flink/bin/start-cluster.sh"]
+       # command: ["/opt/flink/bin/start-cluster.sh"]
         args: ["start-foreground", 
 {{- if eq .Values.checkpoint_store_type "azure" }}
                "-Dfs.azure.account.key.{{ .Values.azure_account }}.blob.core.windows.net={{ .Values.azure_secret }}",
