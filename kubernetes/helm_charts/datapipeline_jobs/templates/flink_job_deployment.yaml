@@ -108,7 +108,7 @@ spec:
         imagePullPolicy: Always
         workingDir: /opt/flink
         command: ["/bin/sh", "-c"]
-        args: ["/opt/flink/bin/flink run -m certificate-email-service-jobmanager:8081 /opt/flink/CertificateEmailService-assembly-0.1.0-SNAPSHOT.jar"]
+        args: ["/opt/flink/flink-run.sh"]
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
