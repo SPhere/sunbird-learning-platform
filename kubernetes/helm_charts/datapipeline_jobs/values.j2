@@ -755,7 +755,7 @@ certificate-email-service:
      include file("/data/flink/conf/base-config.conf")
      kafkaBootstrapServers={{ kafka_servers_list }}
      kafkaTopic=dev.issue.certificate.request
-     GroupId=dev-activity-aggregate-group
+     GroupId=dev-certificate-email-group
      ###Elasticsearch configuration
      es_hosts={{course_elasticsearch_host}}
      es_ports={{elasticsearch_http_port}}
