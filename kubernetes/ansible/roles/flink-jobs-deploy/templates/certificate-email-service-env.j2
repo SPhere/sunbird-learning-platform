@@ -1,0 +1,47 @@
+
+
+###Entity Service Dependancy###
+kafkaBootstrapServers={{ kafka_servers_list }}
+kafkaTopic=dev.issue.certificate.request
+GroupId=dev-certificate-email-group
+
+###Elasticsearch configuration
+es_hosts={{course_elasticsearch_host}}
+es_ports={{elasticsearch_http_port}}
+es_user_index={{ es_user_index }}
+es_course_index={{ es_course_index }}
+
+#####cert download
+certUrl=https://{{ domain_name }}/apis/public/v8/publicCertificateFlinkv2/download
+secretKey={{ cert_email_secret_key }}
+
+#### SMTP Details
+emailHost={{ mail_server_host }}
+emailPort={{ mail_server_port }}
+mailFrom={{ sunbird_mail_server_from_email }}
+mailPassword={{ mail_server_password }}
+mailUserName={{ mail_server_username }}
+
+#####NHSRC details:
+nhsrc_abhyaas_api={{ nhsrc_abhyaas_api }}
+nhsrc_apiKey={{ nhsrc_apiKey }}
+
+##### Cassandra
+get_cassandra_host={{ sunbird_cassandra_host }}
+cassandra_ports={{ sunbird_cassandra_port }}
+cassandra_key_space={{ keyspace_sunbird }}
+#cassandra_enrol_table={{ cassandra_enrol_table }}
+user_sso_bulkupload_v2_table={{ user_sso_bulkupload_v2_table }}
+
+fresh_chat_bearer_key={{ fresh_chat_bearer_key }}
+fresh_chat_baseURI=https://api.in.freshchat.com
+fresh_chat_basePath_upload=/v2/images/upload
+fresh_chat_basePath_whatsapp=/v2/outbound-messages/whatsapp
+fresh_chat_from_phnumber={{ fresh_chat_from_phnumber }}
+aws_accessKey={{ aws_accessKey }}
+aws_secretKey={{ aws_secretKey }}
+s3_bucketName={{ s3_bucketName }}
+
+fresh_chat_msg_template={\"message_template\":{\"storage\":\"none\",\"template_name\":\"completion_certificate\",\"namespace\":\"60ecfaaf_855f_43b6_803c_45580bb195b5\",\"language\":{\"policy\":\"deterministic\",\"code\":\"en\"}
+template_name=completion_certificate
+template_namespace={{ template_namespace }}
