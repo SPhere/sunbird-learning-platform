@@ -111,7 +111,7 @@ spec:
         args: ["/opt/flink/flink-run.sh"]
         envFrom:
         - configMapRef:
-            name: certificate-email-service-config
+            name: certificate-email-service-test-config
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
@@ -168,6 +168,9 @@ spec:
       - name: {{ .Release.Name }}-taskmanager
         image: "{{ .Values.dockerhub }}/{{ .Values.repository }}:{{ .Values.image_tag }}"
         imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: certificate-email-service-test-config
         resources:
           requests:
             cpu: "{{ .Values.taskmanager.cpu_requests }}"
