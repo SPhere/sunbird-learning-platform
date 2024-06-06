@@ -115,3 +115,9 @@ default_channel: "org.sunbird"
 
 cert_rc_base_url: "http://{{private_ingressgateway_ip}}/registry-service/api/v1"
 cert_rc_entity: "TrainingCertificate"
+
+service_certificate_email_service: certificate-email-service
+service_certificate_email_port: 8081
+network_alias_certificate_email_service: certificate-email-service
+image_certificate_email_service: certificate-email-service
+
