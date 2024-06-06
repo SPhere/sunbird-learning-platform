@@ -109,6 +109,9 @@ spec:
         workingDir: /opt/flink
         command: ["/bin/sh", "-c"]
         args: ["/opt/flink/flink-run.sh"]
+        envFrom:
+        - configMapRef:
+            name: certificate-email-service-config
         ports:
         - containerPort: {{ .Values.jobmanager.rpc_port }}
           name: rpc
