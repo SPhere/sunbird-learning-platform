@@ -33,6 +33,7 @@ taskmanager:
   rpc_port: {{ taskmanager_rpc_port }}
   heap_memory: {{ taskmanager_heap_memory }}
   replicas: {{taskmanager_replicacount|default(1)}}
+  data_port: 6121
 
 job_classname: {{ job_classname }}
 {{ taskmanager_liveness | to_nice_yaml }}
