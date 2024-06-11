@@ -797,6 +797,8 @@ certificate-email-service:
     taskmanager.memory.network.fraction: 0.1
     jobmanager.rpc.address: certificate-email-service-jobmanager
     jobmanager.rpc.port: 6123
+    taskmanager.data.port: 6121
+
 content-publish:
   content-publish: |+
     include file("/data/flink/conf/base-config.conf")
