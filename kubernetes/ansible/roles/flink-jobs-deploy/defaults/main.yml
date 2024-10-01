@@ -10,7 +10,7 @@ jobmanager_heap_memory: 1024
 jobmanager_ui_rest_port: 80
 jobmanager_ui_tcp_port: 8081
 jobmanager_ui_service:
-  type: LoadBalancer
+  type: ClusterIP
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
 
@@ -131,6 +131,13 @@ job_classname: ""
 
 ### class name vars
 flink_job_names:
+  certificate-email-service:
+    job_class_name: 'Main'
+    replica: 1
+    jobmanager_memory: 1024m
+    taskmanager_memory: 1024m
+    taskslots: 1
+    cpu_requests: 0.3
   activity-aggregate-updater:
     job_class_name: 'org.sunbird.job.aggregate.task.ActivityAggregateUpdaterStreamTask'
     replica: 1
@@ -304,7 +311,7 @@ mvc_indexer_ml_keyword_host: "{{ mlworkbench | default('') }}"
 mvc_indexer_ml_keyword_port: 3579
 mvc_indexer_nested_fields: "trackable,credentials"
 
-service_monitor_enabled: true
+service_monitor_enabled: false
 
 ### controlling the flink jobs log level
 flink_jobs_console_log_level: INFO
