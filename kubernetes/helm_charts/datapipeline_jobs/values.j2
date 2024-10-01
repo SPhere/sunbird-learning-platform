@@ -3,8 +3,13 @@ imagepullsecrets: {{ imagepullsecrets }}
 dockerhub: {{ dockerhub }}
 repository: {{flink_repository|default('knowledge-platform-jobs')}}
 image_tag: {{ image_tag }}
+checkpoint_store_type: {{ checkpoint_store_type }}
 azure_account: {{ azure_account }}
 azure_secret: {{ azure_secret }}
+s3_access_key: {{ s3_storage_key }}
+s3_secret_key: {{ s3_storage_secret }}
+s3_endpoint: {{ s3_storage_endpoint }}
+s3_path_style_access: {{ s3_path_style_access }}
 serviceMonitor:
   enabled: {{ service_monitor_enabled | lower}}
 
@@ -77,12 +82,16 @@ base_config: |
       statebackend {
         blob {
           storage {
-            account = "{{ azure_account }}.blob.core.windows.net"
+            account = "{% if checkpoint_store_type == "azure" %}{{ azure_account }}.blob.core.windows.net{% elif checkpoint_store_type == "s3" %}{{ flink_dp_storage_container }}{% endif %}"
             container = "{{ flink_container_name }}"
             checkpointing.dir = "checkpoint"
           }
         }
+{% if checkpoint_store_type == "azure" %}
         base.url = "wasbs://"${job.statebackend.blob.storage.container}"@"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.checkpointing.dir}
+{% elif checkpoint_store_type == "s3" %}
+        base.url = "s3://"${job.statebackend.blob.storage.account}"/"${job.statebackend.blob.storage.container}"/"${job.statebackend.blob.storage.checkpointing.dir}
+{% endif %}
       }
     }
     task {
@@ -172,6 +181,7 @@ activity-aggregate-updater:
     jobmanager.memory.flink.size: {{ flink_job_names['activity-aggregate-updater'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['activity-aggregate-updater'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['activity-aggregate-updater'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -204,6 +214,7 @@ relation-cache-updater:
     jobmanager.memory.flink.size: {{ flink_job_names['relation-cache-updater'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['relation-cache-updater'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['relation-cache-updater'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -243,6 +254,7 @@ post-publish-processor:
     jobmanager.memory.flink.size: {{ flink_job_names['post-publish-processor'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['post-publish-processor'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['post-publish-processor'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -273,7 +285,9 @@ questionset-publish:
     azure_storage_key="{{ sunbird_public_storage_account_name }}"
     azure_storage_secret="{{ sunbird_public_storage_account_key }}"
     azure_storage_container="{{ azure_public_container }}"
-
+    aws_storage_key = "{{ aws_storage_key }}"
+    aws_storage_secret: "{{ aws_storage_secret }}"
+    aws_storage_container: "{{ aws_storage_container }}"
     master.category.validation.enabled ="{{ master_category_validation_enabled }}"
 
   flink-conf: |+
@@ -281,6 +295,7 @@ questionset-publish:
     taskmanager.memory.flink.size: {{ flink_job_names['questionset-publish'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['questionset-publish'].taskslots }}
     parallelism.default: 1
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
 
@@ -334,6 +349,7 @@ video-stream-generator:
     jobmanager.memory.flink.size: {{ flink_job_names['video-stream-generator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['video-stream-generator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['video-stream-generator'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -357,15 +373,16 @@ search-indexer:
     dialcode.index.name = "dialcode"
     dailcodemetrics.index.name = "dialcodemetrics"
     restrict.metadata.objectTypes = []
-    nested.fields = ["badgeAssertions", "targets", "badgeAssociations", "plugins", "me_totalTimeSpent", "me_totalPlaySessionCount", "me_totalTimeSpentInSec", "batches", "trackable", "credentials", "discussionForum", "provider", "osMetadata", "actions", "transcripts", "accessibility"]
+    nested.fields = ["badgeAssertions", "targets", "badgeAssociations", "plugins", "me_totalTimeSpent", "me_totalPlaySessionCount", "me_totalTimeSpentInSec", "batches", "trackable", "credentials", "discussionForum", "provider", "osMetadata", "actions", "transcripts", "accessibility","taxonomyPaths_v2", "competencies_v3"]
     schema.definition_cache.expiry = {{ schema_definition_cache_expiry_in_sec }}
-    restrict.objectTypes = {{ search_indexer_restrict_object_types | to_json }}
+    restrict.objectTypes = ["EventSet", "EventSetImage", "Event", "EventImage", "Questionnaire", "Misconception", "FrameworkType", "Concept", "Misconception", "Language", "Reference", "Dimension", "Method", "Library", "Domain", "Api"]
     ignored.fields={{ search_indexer_ignored_fields | to_json }}
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['search-indexer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['search-indexer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['search-indexer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -454,11 +471,15 @@ asset-enrichment:
     azure_storage_key="{{ sunbird_public_storage_account_name }}"
     azure_storage_secret="{{ sunbird_public_storage_account_key }}"
     azure_storage_container="{{ azure_public_container }}"
+    aws_storage_key="{{ aws_storage_key }}"
+    aws_storage_secret="{{ aws_storage_secret }}"
+    aws_storage_container="{{ aws_storage_container }}"
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['asset-enrichment'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['asset-enrichment'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['asset-enrichment'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -483,6 +504,7 @@ audit-history-indexer:
     jobmanager.memory.flink.size: {{ flink_job_names['audit-history-indexer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['audit-history-indexer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['audit-history-indexer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -523,6 +545,7 @@ auto-creator-v2:
     jobmanager.memory.flink.size: {{ flink_job_names['auto-creator-v2'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['auto-creator-v2'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['auto-creator-v2'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -621,6 +644,7 @@ audit-event-generator:
     jobmanager.memory.flink.size: {{ flink_job_names['audit-event-generator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['audit-event-generator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['audit-event-generator'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -651,6 +675,7 @@ metrics-data-transformer:
     jobmanager.memory.flink.size: {{ flink_job_names['metrics-data-transformer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['metrics-data-transformer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['metrics-data-transformer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -701,6 +726,7 @@ collection-cert-pre-processor:
     jobmanager.memory.flink.size: {{ flink_job_names['collection-cert-pre-processor'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['collection-cert-pre-processor'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['collection-cert-pre-processor'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -729,8 +755,8 @@ collection-certificate-generator:
     cert_domain_url = "{{ cert_domain_url }}"
     cert_container_name = "{{ cert_container_name }}"
     cert_cloud_storage_type = "{{ cert_cloud_storage_type }}"
-    cert_azure_storage_secret = "{{ cert_azure_storage_secret }}"
-    cert_azure_storage_key = "{{ cert_azure_storage_key }}"
+    cert_aws_storage_secret = "{{ cert_aws_storage_secret }}"
+    cert_aws_storage_key = "{{ cert_aws_storage_key }}"
     service {
       certreg.basePath = "{{ cert_reg_service_base_url }}"
       learner.basePath = "{{ learner_service_base_url }}"
@@ -739,7 +765,7 @@ collection-certificate-generator:
       rc.entity = "{{ cert_rc_entity }}"
     }
     enable.suppress.exception = {{ collection_certificate_generator_enable_suppress_exception | lower }}
-    enable.rc.certificate = {{ collection_certificate_generator_enable_rc_certificate | lower }}
+    enable.rc.certificate = false
     task.rc.badcharlist = {{ collection_certificate_generator_rc_badcharlist }}
 
 
@@ -747,6 +773,7 @@ collection-certificate-generator:
     jobmanager.memory.flink.size: {{ flink_job_names['collection-certificate-generator'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['collection-certificate-generator'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['collection-certificate-generator'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
@@ -784,10 +811,55 @@ mvc-indexer:
     jobmanager.memory.flink.size: {{ flink_job_names['mvc-indexer'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['mvc-indexer'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['mvc-indexer'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
+certificate-email-service:
+  certificate-email-service: |+
+     kafkaBootstrapServers={{ kafka_servers_list }}
+     kafkaTopic=dev.issue.certificate.request
+     GroupId=dev-activity-aggregate-group
+     ###Elasticsearch configuration
+     es_hosts={{course_elasticsearch_host}}
+     es_ports={{elasticsearch_http_port}}
+     es_user_index={{ es_user_index }}
+     es_course_index={{ es_course_index }}
+     certUrl=https://{{ domain_name }}/apis/public/v8/publicCertificateFlinkv2/download
+     secretKey={{ cert_email_secret_key }}
+     emailHost={{ mail_server_host }}
+     emailPort={{ mail_server_port }}
+     mailFrom={{ sunbird_mail_server_from_email }}
+     mailPassword={{ mail_server_password }}
+     mailUserName={{ mail_server_username }}
+     nhsrc_abhyaas_api={{ nhsrc_abhyaas_api }}
+     nhsrc_apiKey={{ nhsrc_apiKey }}
+     get_cassandra_host={{ sunbird_cassandra_host }}
+     cassandra_ports={{ sunbird_cassandra_port }}
+     cassandra_key_space={{ keyspace_sunbird }}
+     #cassandra_enrol_table={{ cassandra_enrol_table }}
+     user_sso_bulkupload_v2_table={{ user_sso_bulkupload_v2_table }}
+     fresh_chat_bearer_key={{ fresh_chat_bearer_key }}
+     fresh_chat_baseURI=https://api.in.freshchat.com
+     fresh_chat_basePath_upload=/v2/images/upload
+     fresh_chat_basePath_whatsapp=/v2/outbound-messages/whatsapp
+     fresh_chat_from_phnumber={{ fresh_chat_from_phnumber }}
+     aws_accessKey={{ aws_accessKey }}
+     aws_secretKey={{ aws_secretKey }}
+     s3_bucketName={{ s3_bucketName }}
+     fresh_chat_msg_template={\"message_template\":{\"storage\":\"none\",\"template_name\":\"completion_certificate\",\"namespace\":\"60ecfaaf_855f_43b6_803c_45580bb195b5\",\"language\":{\"policy\":\"deterministic\",\"code\":\"en\"}
+     template_name=completion_certificate
+     template_namespace={{ template_namespace }}
 
+  flink-conf: |+
+    jobmanager.memory.flink.size: {{ flink_job_names['certificate-email-service'].jobmanager_memory }}
+    taskmanager.memory.flink.size: {{ flink_job_names['certificate-email-service'].taskmanager_memory }}
+    taskmanager.numberOfTaskSlots: {{ flink_job_names['certificate-email-service'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
+    parallelism.default: 1
+    jobmanager.execution.failover-strategy: region
+    taskmanager.memory.network.fraction: 0.1
+    
 content-publish:
   content-publish: |+
     include file("/data/flink/conf/base-config.conf")
@@ -885,7 +957,8 @@ content-publish:
         full = ["appIcon", "grayScaleAppIcon", "artifactUrl", "itemSetPreviewUrl", "media"]
       }
 
-      nested.fields=["badgeAssertions", "targets", "badgeAssociations", "plugins", "me_totalTimeSpent", "me_totalPlaySessionCount", "me_totalTimeSpentInSec", "batches", "trackable", "credentials", "discussionForum", "provider", "osMetadata", "actions", "transcripts", "accessibility"]
+      nested.fields=["badgeAssertions", "targets", "badgeAssociations", "plugins", "me_totalTimeSpent", "me_totalPlaySessionCount", "me_totalTimeSpentInSec", "batches", "trackable", "credentials", "discussionForum", "provider", "osMetadata", "actions", "transcripts", "accessibility","taxonomyPaths_v2", "competencies_v3", "test_competencies_v2","competencies_v2"]
+      restrict.objectTypes = ["EventSet", "Questionnaire", "Misconception", "FrameworkType", "EventSetImage", "EventImage"] 
 
     }
     cloud_storage {
@@ -937,7 +1010,42 @@ content-publish:
       TextBookUnit: "Textbook Unit"
       Asset: "Certificate Template"
     }
-
+    contentTypeToPrimaryCategory {
+      ClassroomTeachingVideo: "Explanation Content"
+      ConceptMap: "Learning Resource"
+      Course: "Course"
+      CuriosityQuestionSet: "Practice Question Set"
+      eTextBook: "eTextbook"
+      ExperientialResource: "Learning Resource"
+      ExplanationResource: "Explanation Content"
+      ExplanationVideo: "Explanation Content"
+      FocusSpot: "Teacher Resource"
+      LearningOutcomeDefinition: "Teacher Resource"
+      MarkingSchemeRubric: "Teacher Resource"
+      PedagogyFlow: "Teacher Resource"
+      PracticeQuestionSet: "Practice Question Set"
+      PracticeResource: "Practice Question Set"
+      SelfAssess: "Course Assessment"
+      TeachingMethod: "Teacher Resource"
+      TextBook: "Digital Textbook"
+      Collection: "Content Playlist"
+      ExplanationReadingMaterial: "Learning Resource"
+      LearningActivity: "Learning Resource"
+      LessonPlan: "Content Playlist"
+      LessonPlanResource: "Teacher Resource"
+      PreviousBoardExamPapers: "Learning Resource"
+      TVLesson: "Explanation Content"
+      OnboardingResource: "Learning Resource"
+      ReadingMaterial: "Learning Resource"
+      Template: "Template"
+      Asset: "Asset"
+      Plugin: "Plugin"
+      LessonPlanUnit: "Lesson Plan Unit"
+      CourseUnit: "Course Unit"
+      TextBookUnit: "Textbook Unit"
+      Asset: "Certificate Template"
+      Course: "Program"
+    }
     compositesearch.index.name = "compositesearch"
     search.document.type = "cs"
 
@@ -945,6 +1053,13 @@ content-publish:
     azure_storage_key="{{ sunbird_public_storage_account_name }}"
     azure_storage_secret="{{ sunbird_public_storage_account_key }}"
     azure_storage_container="{{ azure_public_container }}"
+    aws_storage_key="{{ aws_storage_key }}"
+    aws_storage_secret="{{ aws_storage_secret }}"
+    aws_storage_container="{{ aws_storage_container }}"
+    
+    Course="Program"
+    Course="Mandatory Course Goal"
+
 
     master.category.validation.enabled ="{{ master_category_validation_enabled }}"
     service {
@@ -955,6 +1070,7 @@ content-publish:
     jobmanager.memory.flink.size: {{ flink_job_names['content-publish'].jobmanager_memory }}
     taskmanager.memory.flink.size: {{ flink_job_names['content-publish'].taskmanager_memory }}
     taskmanager.numberOfTaskSlots: {{ flink_job_names['content-publish'].taskslots }}
+    env.java.opts: -Dlog4j2.formatMsgNoLookups=true
     parallelism.default: 1
     jobmanager.execution.failover-strategy: region
     taskmanager.memory.network.fraction: 0.1
