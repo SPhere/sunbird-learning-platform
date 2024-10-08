@@ -249,6 +249,9 @@ post-publish-processor:
       learning_service.basePath = "{{ kp_learning_service_base_url }}"
       dial.basePath = "https://{{domain_name}}/dial/"
     }
+    dialcode {
+     linkable.primaryCategory = ["Course"]
+  }
 
   flink-conf: |+
     jobmanager.memory.flink.size: {{ flink_job_names['post-publish-processor'].jobmanager_memory }}
